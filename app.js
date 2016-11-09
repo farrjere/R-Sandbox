@@ -19,46 +19,29 @@ var biopsyViewModel = function (data) {
 var ViewModel = function () {
     var self = this;
     self.biopsyData = ko.observableArray();
-    self.classCounts = ko.observableArray();
+    self.valueCounts = ko.observableArray();
     self.error = ko.observable('');
     var opencpu_root = '/ocpu/library/appdemo/';
     var data_uri = opencpu_root+'data/biopsy/json';
     ocpu.seturl(opencpu_root+"/R");
-    function ajaxHelper(uri, method, data) {
-        self.error(''); // Clear error message
-        return $.ajax({
-            type: method,
-            url: uri,
-            dataType: 'json',
-            contentType: 'application/json',
-            data: data ? JSON.stringify(data) : null
-        }).fail(function (jqXHR, textStatus, errorThrown) {
-            self.error(errorThrown);
-        });
-    }
-
-    self.getAllData = function() {
-        ajaxHelper(data_uri, 'GET').done(function (json) {
-            for (var i = 0; i < json.length; i++) {
-                var item = new biopsyViewModel(json[i]);
-                self.biopsyData.push(item);
-            }
-            var benignCount = ko.utils.arrayFilter(self.biopsyData(), function(item){return item.Class() == 'benign'}).length;
-            var malignantCount = ko.utils.arrayFilter(self.biopsyData(), function(item){return item.Class() == 'malignant'}).length;
-            self.classCounts.push({class: 'benign', count: benignCount});
-            self.classCounts.push({class: 'malignant', count: malignantCount});
-            addD3Chart();
-            printsummary(json);
-        });
-    }
-
-
-    function addD3Chart(){
+    self.availableClasses = ko.observableArray();
+    self.selectedClass = ko.observable();
+    self.selectedClass.subscribe(function(){
+        var classValues =  ko.utils.arrayMap(self.biopsyData(), function(item){return item[self.selectedClass()]();}
+        var distinctValues = ko.utils.arrayGetDistinctValues(classValues);
+        self.valueCounts([]);
+        for(int i =0; i < distinctValues.length; i++){
+            var distinctValue = distinctValues[i];
+            var valueCount = ko.utils.arrayFilter(self.biopsyData(), function(item){return item[self.selectedClass()] == distinctValue).length;
+            self.valueCounts.push({name : distinctValue, count: valueCount});
+        }
+        d3.select("svg").remove();
         var svg = d3.select("svg"),
         margin = {top: 20, right: 20, bottom: 30, left: 40},
         width = +svg.attr("width") - margin.left - margin.right,
         height = +svg.attr("height") - margin.top - margin.bottom;
 
+        svg.selectAll("*").remove();
         var x = d3.scaleBand().rangeRound([0, width]).padding(0.1),
         y = d3.scaleLinear().rangeRound([height, 0]);
 
@@ -85,10 +68,40 @@ var ViewModel = function () {
             .data(self.classCounts())
             .enter().append("rect")
             .attr("class", "bar")
-            .attr("x", function(d) { return x(d.class); })
+            .attr("x", function(d) { return x(d.distinctValue); })
             .attr("y", function(d) { return y(d.count); })
             .attr("width", x.bandwidth())
             .attr("height", function(d) { return height - y(d.count); });
+    });
+
+    function ajaxHelper(uri, method, data) {
+        self.error(''); // Clear error message
+        return $.ajax({
+            type: method,
+            url: uri,
+            dataType: 'json',
+            contentType: 'application/json',
+            data: data ? JSON.stringify(data) : null
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+            self.error(errorThrown);
+        });
+    }
+
+    self.getAllData = function() {
+        ajaxHelper(data_uri, 'GET').done(function (json) {
+            for (var i = 0; i < json.length; i++) {
+                var item = new biopsyViewModel(json[i]);
+                self.biopsyData.push(item);
+            }
+            ko.utils.arrayPushAll(self.availableClasses, self.Object.keys(json[0]));
+            
+            printsummary(json);
+        });
+    }
+
+
+    function addD3Chart(){
+        
     }
 
     function printsummary(mydata){
