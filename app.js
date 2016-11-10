@@ -43,7 +43,7 @@ var ViewModel = function () {
     self.availableClasses = ko.observableArray();
     self.selectedClass = ko.observable();
     self.selectedClass.subscribe(function(){
-        var classValues =  ko.utils.arrayMap(self.biopsyData(), function(item){return item[self.selectedClass()]();});
+        var classValues =  ko.utils.arrayMap(self.biopsyData(), function(item){return item[self.selectedClass()];});
         var distinctValues = ko.utils.arrayGetDistinctValues(classValues);
         self.valueCounts([]);
         for(var i =0; i < distinctValues.length; i++){
