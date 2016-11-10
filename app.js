@@ -53,11 +53,11 @@ var ViewModel = function () {
             }).length;
             self.valueCounts.push({name : distinctValue, count: valueCount});
         }
-        d3.select("svg").remove();
-        var svg = d3.select("svg"),
-        margin = {top: 20, right: 20, bottom: 30, left: 40},
-        width = +svg.attr("width") - margin.left - margin.right,
-        height = +svg.attr("height") - margin.top - margin.bottom;
+        //d3.select("svg").remove();
+        var svg = d3.select("svg");
+        var margin = {top: 20, right: 20, bottom: 30, left: 40};
+        var width = +svg.attr("width") - margin.left - margin.right;
+        var height = +svg.attr("height") - margin.top - margin.bottom;
 
         svg.selectAll("*").remove();
         var x = d3.scaleBand().rangeRound([0, width]).padding(0.1),
