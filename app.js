@@ -52,7 +52,7 @@ var ViewModel = function () {
         for(var i =0; i < distinctValues.length; i++){
             var distinctValue = distinctValues[i];
             var valueCount = ko.utils.arrayFilter(self.biopsyData(), function(item){
-                return item[mappedClass] == distinctValue;
+                return item[mappedClass]() == distinctValue;
             }).length;
             self.valueCounts.push({name : distinctValue, count: valueCount});
         }
@@ -89,7 +89,7 @@ var ViewModel = function () {
             .data(self.valueCounts())
             .enter().append("rect")
             .attr("class", "bar")
-            .attr("x", function(d) { return x(d.distinctValue); })
+            .attr("x", function(d) { return x(d.name); })
             .attr("y", function(d) { return y(d.count); })
             .attr("width", x.bandwidth())
             .attr("height", function(d) { return height - y(d.count); });
