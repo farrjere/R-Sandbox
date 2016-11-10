@@ -43,7 +43,10 @@ var ViewModel = function () {
     self.availableClasses = ko.observableArray();
     self.selectedClass = ko.observable();
     self.selectedClass.subscribe(function(){
-        var classValues =  ko.utils.arrayMap(self.biopsyData(), function(item){return item[self.selectedClass()];});
+        var mappedClass = keyMapper(self.selectedClass());
+        var classValues =  ko.utils.arrayMap(self.biopsyData(), function(item){
+            return item[mappedClass];
+        });
         var distinctValues = ko.utils.arrayGetDistinctValues(classValues);
         self.valueCounts([]);
         for(var i =0; i < distinctValues.length; i++){
@@ -83,7 +86,7 @@ var ViewModel = function () {
               .text("Frequency");
 
           g.selectAll(".bar")
-            .data(self.classCounts())
+            .data(self.valueCounts())
             .enter().append("rect")
             .attr("class", "bar")
             .attr("x", function(d) { return x(d.distinctValue); })
