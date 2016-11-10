@@ -30,9 +30,9 @@ var ViewModel = function () {
         var classValues =  ko.utils.arrayMap(self.biopsyData(), function(item){return item[self.selectedClass()]();});
         var distinctValues = ko.utils.arrayGetDistinctValues(classValues);
         self.valueCounts([]);
-        for(int i =0; i < distinctValues.length; i++){
+        for(var i =0; i < distinctValues.length; i++){
             var distinctValue = distinctValues[i];
-            var valueCount = ko.utils.arrayFilter(self.biopsyData(), function(item){return item[self.selectedClass()] == distinctValue).length;
+            var valueCount = ko.utils.arrayFilter(self.biopsyData(), function(item){return item[self.selectedClass()] == distinctValue;}).length;
             self.valueCounts.push({name : distinctValue, count: valueCount});
         }
         d3.select("svg").remove();
@@ -97,7 +97,7 @@ var ViewModel = function () {
             
             printsummary(json);
         });
-    }
+    };
 
 
     function addD3Chart(){
