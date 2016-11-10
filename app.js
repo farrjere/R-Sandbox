@@ -93,7 +93,7 @@ var ViewModel = function () {
                 var item = new biopsyViewModel(json[i]);
                 self.biopsyData.push(item);
             }
-            ko.utils.arrayPushAll(self.availableClasses, self.Object.keys(json[0]));
+            ko.utils.arrayPushAll(self.availableClasses, Object.keys(json[0]));
             
             printsummary(json);
         });
