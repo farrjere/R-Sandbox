@@ -69,7 +69,7 @@ var ViewModel = function () {
         var g = svg.append("g")
             .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
         x.domain(distinctValues);
-        y.domain([0, 500]);
+        y.domain([0, d3.max(self.valueCounts(), function(d) { return d.frequency; })]);
         g.append("g")
               .attr("class", "axis axis--x")
               .attr("transform", "translate(0," + height + ")")
@@ -86,7 +86,7 @@ var ViewModel = function () {
               .text("Frequency");
 
           g.selectAll(".bar")
-            .data(self.valueCounts())
+            .data(self.valueCounts().sort(function(a, b) {return (a.name > b.name) ? 1 : ((a.name < b.name) ? -1 : 0);}))
             .enter()
             .append("rect")
             .attr("class", "bar")
