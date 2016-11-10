@@ -83,7 +83,7 @@ var ViewModel = function () {
               .text("Frequency");
 
           g.selectAll(".bar")
-            .data(self.classCounts())
+            .data(self.valueCounts())
             .enter().append("rect")
             .attr("class", "bar")
             .attr("x", function(d) { return x(d.distinctValue); })
