@@ -16,6 +16,22 @@ var biopsyViewModel = function (data) {
     _self.Class = ko.observable(data.class);
 };
 
+function keyMapper(key){
+    switch(key){
+        case "ID": return "SampleNumber";
+        case "V1": return "ClumpThickness";
+        case "V2": return "CellSizeUniformity";
+        case "V3": return "CellShapeUniformity";
+        case "V4": return "MarginalAdhesion";
+        case "V5": return "EpithelialCellSize";
+        case "V6": return "BareNuclei";
+        case "V7": return "BlandChromatin";
+        case "V8": return "NormalNucleoli";
+        case "V9": return "Mitoses";
+        case "class": return "Class";
+    }
+}
+
 var ViewModel = function () {
     var self = this;
     self.biopsyData = ko.observableArray();
@@ -32,7 +48,9 @@ var ViewModel = function () {
         self.valueCounts([]);
         for(var i =0; i < distinctValues.length; i++){
             var distinctValue = distinctValues[i];
-            var valueCount = ko.utils.arrayFilter(self.biopsyData(), function(item){return item[self.selectedClass()] == distinctValue;}).length;
+            var valueCount = ko.utils.arrayFilter(self.biopsyData(), function(item){
+                return item[self.selectedClass()] == keyMapper(distinctValue);
+            }).length;
             self.valueCounts.push({name : distinctValue, count: valueCount});
         }
         d3.select("svg").remove();
