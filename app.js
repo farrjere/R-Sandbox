@@ -45,14 +45,14 @@ var ViewModel = function () {
     self.selectedClass.subscribe(function(){
         var mappedClass = keyMapper(self.selectedClass());
         var classValues =  ko.utils.arrayMap(self.biopsyData(), function(item){
-            return item[mappedClass];
+            return item[mappedClass]();
         });
         var distinctValues = ko.utils.arrayGetDistinctValues(classValues);
         self.valueCounts([]);
         for(var i =0; i < distinctValues.length; i++){
             var distinctValue = distinctValues[i];
             var valueCount = ko.utils.arrayFilter(self.biopsyData(), function(item){
-                return item[self.selectedClass()] == keyMapper(distinctValue);
+                return item[mappedClass] == distinctValue;
             }).length;
             self.valueCounts.push({name : distinctValue, count: valueCount});
         }
