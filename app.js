@@ -68,7 +68,7 @@ var ViewModel = function () {
 
         var g = svg.append("g")
             .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-        x.domain(['benign', 'malignant']);
+        x.domain(distinctValues);
         y.domain([0, 500]);
         g.append("g")
               .attr("class", "axis axis--x")
@@ -87,7 +87,8 @@ var ViewModel = function () {
 
           g.selectAll(".bar")
             .data(self.valueCounts())
-            .enter().append("rect")
+            .enter()
+            .append("rect")
             .attr("class", "bar")
             .attr("x", function(d) { return x(d.name); })
             .attr("y", function(d) { return y(d.count); })
