@@ -38,13 +38,13 @@ var ViewModel = function () {
     self.biopsyData = ko.observableArray();
     self.valueCounts = ko.observableArray();
     self.error = ko.observable('');
-    self.model = ko.observable('class~V1+V2+V3+V4+V5+V6+V7+V7+V9');
+    self.model = ko.observable('Class~SampleNumber+ClumpThickness+CellSizeUniformity+CellShapeUniformity+MarginalAdhesion+EpithelialCellSize+BareNuclei+BlandChromatin+NormalNucleoli+Mitoses');
     var opencpu_root = '/ocpu/library/';
     var data_uri = opencpu_root+'appdemo/data/biopsy/json';
     self.splitPercent = ko.observable(1.0);
     self.availableClasses = ko.observableArray();
     self.selectedClass = ko.observable();
-    
+
     self.selectedClass.subscribe(function(){
         var mappedClass = keyMapper(self.selectedClass());
         var classValues =  ko.utils.arrayMap(self.biopsyData(), function(item){
