@@ -38,7 +38,7 @@ var ViewModel = function () {
     self.biopsyData = ko.observableArray();
     self.valueCounts = ko.observableArray();
     self.error = ko.observable('');
-    self.model = ko.observable('Class~SampleNumber+ClumpThickness+CellSizeUniformity+CellShapeUniformity+MarginalAdhesion+EpithelialCellSize+BareNuclei+BlandChromatin+NormalNucleoli+Mitoses');
+    self.model = ko.observable('Class~V1+V2+V3+V4+V5+V6+V7+V7+V9');
     var opencpu_root = '/ocpu/library/';
     var data_uri = opencpu_root+'appdemo/data/biopsy/json';
     self.splitPercent = ko.observable(1.0);
@@ -129,11 +129,11 @@ var ViewModel = function () {
             ko.utils.arrayPushAll(self.availableClasses, Object.keys(json[0]));
             
             printSummary(json);
-            getDecisionTree();
+            getDecisionTree(json);
         });
     };
 
-    function getDecisionTree(){
+    function getDecisionTree(json){
         ocpu.seturl(opencpu_root+"jsonDecisionTrees/R");
         var shuffledData = shuffle(self.biopsyData());
         var splitIndex = Math.floor(shuffledData.length * self.splitPercent());
