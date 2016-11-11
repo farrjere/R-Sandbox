@@ -34,15 +34,7 @@
         <div class="col-md-6">
             <div class="panel panel-default">
                 <div class="panel-body">
-                    <ul class="list-unstyled" data-bind="foreach: dt_rules">
-                        <li>
-                            Rule: <span data-bind="text: Rule"></span>
-                            <ul>
-                                <li>Subrule: <span data-bind="text: Subrule"></span></li>
-                                <li>Leaf: <span data-bind="text: Leaf"></span></li>
-                            </ul>
-                        </li>
-                    </ul>
+                DT Top Node: <span data-bind="text: dt_rules.variableName[0]"></span>
                 </div>
             </div>
             <div class="alert alert-danger" data-bind="visible: error"><p data-bind="text: error"></p></div>
