@@ -34,12 +34,13 @@ function keyMapper(key){
 
 var ViewModel = function () {
     var self = this;
+    self.dt_rules = ko.observableArray();
     self.biopsyData = ko.observableArray();
     self.valueCounts = ko.observableArray();
     self.error = ko.observable('');
-    var opencpu_root = '/ocpu/library/appdemo/';
-    var data_uri = opencpu_root+'data/biopsy/json';
-    ocpu.seturl(opencpu_root+"/R");
+    var opencpu_root = '/ocpu/library/';
+    var data_uri = opencpu_root+'appdemo/data/biopsy/json';
+    self.splitPercent = ko.observable(1.0);
     self.availableClasses = ko.observableArray();
     self.selectedClass = ko.observable();
     self.selectedClass.subscribe(function(){
@@ -49,6 +50,7 @@ var ViewModel = function () {
         });
         var distinctValues = ko.utils.arrayGetDistinctValues(classValues);
         self.valueCounts([]);
+        
         for(var i =0; i < distinctValues.length; i++){
             var distinctValue = distinctValues[i];
             var valueCount = ko.utils.arrayFilter(self.biopsyData(), function(item){
@@ -56,7 +58,11 @@ var ViewModel = function () {
             }).length;
             self.valueCounts.push({name : distinctValue, count: valueCount});
         }
-        //d3.select("svg").remove();
+
+        plotBarChart(distinctValues);
+    });
+
+    function plotBarChart(distinctValues){
         var svg = d3.select("svg");
         var margin = {top: 20, right: 20, bottom: 30, left: 40};
         var width = +svg.attr("width") - margin.left - margin.right;
@@ -68,6 +74,7 @@ var ViewModel = function () {
 
         var g = svg.append("g")
             .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
         x.domain(distinctValues);
         y.domain([0, d3.max(self.valueCounts(), function(d) { return d.frequency; })]);
         g.append("g")
@@ -75,17 +82,17 @@ var ViewModel = function () {
               .attr("transform", "translate(0," + height + ")")
               .call(d3.axisBottom(x));
 
-          g.append("g")
-              .attr("class", "axis axis--y")
-              .call(d3.axisLeft(y).ticks(10))
-              .append("text")
-              .attr("transform", "rotate(-90)")
-              .attr("y", 6)
-              .attr("dy", "0.71em")
-              .attr("text-anchor", "end")
-              .text("Frequency");
+        g.append("g")
+          .attr("class", "axis axis--y")
+          .call(d3.axisLeft(y).ticks(10))
+          .append("text")
+          .attr("transform", "rotate(-90)")
+          .attr("y", 6)
+          .attr("dy", "0.71em")
+          .attr("text-anchor", "end")
+          .text("Frequency");
 
-          g.selectAll(".bar")
+        g.selectAll(".bar")
             .data(self.valueCounts().sort(function(a, b) {return (a.name > b.name) ? 1 : ((a.name < b.name) ? -1 : 0);}))
             .enter()
             .append("rect")
@@ -94,7 +101,7 @@ var ViewModel = function () {
             .attr("y", function(d) { return y(d.count); })
             .attr("width", x.bandwidth())
             .attr("height", function(d) { return height - y(d.count); });
-    });
+    }
 
     function ajaxHelper(uri, method, data) {
         self.error(''); // Clear error message
@@ -117,16 +124,52 @@ var ViewModel = function () {
             }
             ko.utils.arrayPushAll(self.availableClasses, Object.keys(json[0]));
             
-            printsummary(json);
+            printSummary(json);
+            getDecisionTree();
         });
     };
 
-
-    function addD3Chart(){
-        
+    function getDecisionTree(){
+        ocpu.seturl(opencpu_root+"jsonDecisionTrees/R");
+        var shuffledData = shuffle(self.biopsyData());
+        var splitIndex = Math.floor(shuffledData.length * self.splitPercent());
+        trainData = shuffledData.slice(0, splitIndex);
+        testData = shuffledData.slice(splitIndex+1);
+        var req = ocpu.call("json_dt", {
+          model : self.model(), 
+          data: trainData
+        }, function(session){
+           session.getObject(function(data){
+                //data is the object returned by the R function
+                ko.utils.arrayPushAll(dt_rules, data);
+            });
+        }).fail(function(){
+          alert("Server error: " + req.responseText);
+        });
     }
 
-    function printsummary(mydata){
+    function shuffle(array) {
+          var currentIndex = array.length, temporaryValue, randomIndex;
+
+          // While there remain elements to shuffle...
+          while (0 !== currentIndex) {
+
+            // Pick a remaining element...
+            randomIndex = Math.floor(Math.random() * currentIndex);
+            currentIndex -= 1;
+
+            // And swap it with the current element.
+            temporaryValue = array[currentIndex];
+            array[currentIndex] = array[randomIndex];
+            array[randomIndex] = temporaryValue;
+          }
+
+          return array;
+    }
+
+
+    function printSummary(mydata){
+        ocpu.seturl(opencpu_root+"appdemo/R");
         //perform the request
         var req = ocpu.call("printsummary", {
           mydata : mydata
