@@ -1,7 +1,5 @@
 json_dt<-function(data,model){
-  library(rpart)
-  library(rpart.utils)
-  fit<-rpart(model,data)
-  rules<-rpart.rules.table(fit)
-  return (rules)
+  library(partykit)
+  fit<-ctree(model,data)
+  return (partykit:::.list.rules.party(fit))
 }
