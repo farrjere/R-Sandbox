@@ -1,7 +1,5 @@
 json_dt<-function(data,model){
-  library(rpart)
-  library(rpart.utils)
+  library(partykit)
   fit<-rpart(model,data)
-  rules<-rpart.rules.table(fit)
-  return (rules)
+  return (json_prsr(fit))
 }
