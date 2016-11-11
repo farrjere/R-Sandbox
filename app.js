@@ -133,7 +133,7 @@ var ViewModel = function () {
         trainData = shuffledData.slice(0, splitIndex);
         testData = shuffledData.slice(splitIndex+1);
         var model = self.model();
-        ajaxHelper(dtUrl, 'POST', "model="+model+"&data="+JSON.stringify(trainData))
+        ajaxHelper(dtUrl, 'POST', "model="+model+"&data=biopsy")
         .done(function (json) {
             ko.utils.arrayPushAll(self.dt_rules, json);
         });
