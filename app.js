@@ -61,6 +61,7 @@ var ViewModel = function () {
             self.valueCounts.push({name : distinctValue, count: valueCount});
         }
 
+         //d3.select("svg").remove();
         var svg = d3.select("svg");
         var margin = {top: 20, right: 20, bottom: 30, left: 40};
         var width = +svg.attr("width") - margin.left - margin.right;
@@ -72,28 +73,25 @@ var ViewModel = function () {
 
         var g = svg.append("g")
             .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
         x.domain(distinctValues);
-        y.domain([0, d3.max(self.valueCounts(), function(d) { return d.frequency; })]);
+        y.domain([0, 500]);
         g.append("g")
               .attr("class", "axis axis--x")
               .attr("transform", "translate(0," + height + ")")
               .call(d3.axisBottom(x));
 
-        g.append("g")
-          .attr("class", "axis axis--y")
-          .call(d3.axisLeft(y).ticks(10))
-          .append("text")
-          .attr("transform", "rotate(-90)")
-          .attr("y", 6)
-          .attr("dy", "0.71em")
-          .attr("text-anchor", "end")
-          .text("Frequency");
+          g.append("g")
+              .attr("class", "axis axis--y")
+              .call(d3.axisLeft(y).ticks(10))
+              .append("text")
+              .attr("transform", "rotate(-90)")
+              .attr("y", 6)
+              .attr("dy", "0.71em")
+              .attr("text-anchor", "end")
+              .text("Frequency");
 
-        g.selectAll(".bar")
-            .data(self.valueCounts().sort(function(a, b) {
-                return (a.name > b.name) ? 1 : ((a.name < b.name) ? -1 : 0);
-            }))
+          g.selectAll(".bar")
+            .data(self.valueCounts())
             .enter()
             .append("rect")
             .attr("class", "bar")
