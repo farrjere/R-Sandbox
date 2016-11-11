@@ -107,8 +107,7 @@ var ViewModel = function () {
             type: method,
             url: uri,
             dataType: 'json',
-            contentType: 'application/json',
-            data: data ? JSON.stringify(data) : null
+            data: data ? data : null
         }).fail(function (jqXHR, textStatus, errorThrown) {
             self.error(errorThrown);
         });
@@ -128,22 +127,25 @@ var ViewModel = function () {
     };
 
     function getDecisionTree(json){
-        ocpu.seturl(opencpu_root+"jsonDecisionTrees/R");
+        //ocpu.seturl(opencpu_root+"jsonDecisionTrees/R");
+        var dtUrl = opencpu_root+"jsonDecisionTrees/R/json_dt/json"
         var shuffledData = shuffle(json);
         var splitIndex = Math.floor(shuffledData.length * self.splitPercent());
         trainData = shuffledData.slice(0, splitIndex);
         testData = shuffledData.slice(splitIndex+1);
-        var req = ocpu.call("json_dt", {
-          model : self.model(), 
-          data: trainData
-        }, function(session){
-           session.getObject(function(data){
-                //data is the object returned by the R function
-                ko.utils.arrayPushAll(self.dt_rules, data);
-            });
-        }).fail(function(){
-          alert("Server error: " + req.responseText);
+        var model = self.model();
+        ajaxHelper(data_uri, 'POST', {model:model, data:trainData}).done(function (json) {
+            ko.utils.arrayPushAll(self.dt_rules, json);
         });
+
+        // var req = ocpu.call("json_dt", {model : model, data: trainData}, function(session){
+        //    session.getObject(function(data){
+        //         //data is the object returned by the R function
+        //         ko.utils.arrayPushAll(self.dt_rules, data);
+        //     });
+        // }).fail(function(){
+        //   alert("Server error: " + req.responseText);
+        // });
     }
 
     function shuffle(array) {
