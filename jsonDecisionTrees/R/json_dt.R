@@ -1,6 +1,6 @@
 json_dt<-function(model,data){
   library(grid)
-  library(partykit)
+  library(party)
   fit<-ctree(formula = model,data=data)
-  return (partykit:::.list.rules.party(fit))
+  return (1)
 }
