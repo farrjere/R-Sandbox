@@ -141,7 +141,7 @@ var ViewModel = function () {
         }, function(session){
            session.getObject(function(data){
                 //data is the object returned by the R function
-                ko.utils.arrayPushAll(dt_rules, data);
+                ko.utils.arrayPushAll(self.dt_rules, data);
             });
         }).fail(function(){
           alert("Server error: " + req.responseText);
