@@ -61,10 +61,6 @@ var ViewModel = function () {
             self.valueCounts.push({name : distinctValue, count: valueCount});
         }
 
-        plotBarChart(distinctValues);
-    });
-
-    function plotBarChart(distinctValues){
         var svg = d3.select("svg");
         var margin = {top: 20, right: 20, bottom: 30, left: 40};
         var width = +svg.attr("width") - margin.left - margin.right;
@@ -105,7 +101,7 @@ var ViewModel = function () {
             .attr("y", function(d) { return y(d.count); })
             .attr("width", x.bandwidth())
             .attr("height", function(d) { return height - y(d.count); });
-    }
+    });
 
     function ajaxHelper(uri, method, data) {
         self.error(''); // Clear error message
