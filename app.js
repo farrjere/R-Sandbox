@@ -38,11 +38,13 @@ var ViewModel = function () {
     self.biopsyData = ko.observableArray();
     self.valueCounts = ko.observableArray();
     self.error = ko.observable('');
+    self.model = ko.observable('class~V1+V2+V3+V4+V5+V6+V7+V7+V9');
     var opencpu_root = '/ocpu/library/';
     var data_uri = opencpu_root+'appdemo/data/biopsy/json';
     self.splitPercent = ko.observable(1.0);
     self.availableClasses = ko.observableArray();
     self.selectedClass = ko.observable();
+    
     self.selectedClass.subscribe(function(){
         var mappedClass = keyMapper(self.selectedClass());
         var classValues =  ko.utils.arrayMap(self.biopsyData(), function(item){
@@ -93,7 +95,9 @@ var ViewModel = function () {
           .text("Frequency");
 
         g.selectAll(".bar")
-            .data(self.valueCounts().sort(function(a, b) {return (a.name > b.name) ? 1 : ((a.name < b.name) ? -1 : 0);}))
+            .data(self.valueCounts().sort(function(a, b) {
+                return (a.name > b.name) ? 1 : ((a.name < b.name) ? -1 : 0);
+            }))
             .enter()
             .append("rect")
             .attr("class", "bar")
