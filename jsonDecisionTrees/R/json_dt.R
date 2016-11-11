@@ -38,8 +38,8 @@ get_ctree_parts.TerminalNode <- function(x, ...)
 }
 
 json_dt<-function(model,data){
-  data<-data.frame(data)
   library(grid)
+  library(party)
   library(appdemo)
   fit<-ctree(formula = model,data=data)
   useful_bits_of_fit <- get_ctree_parts(fit)
