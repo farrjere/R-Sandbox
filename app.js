@@ -106,7 +106,6 @@ var ViewModel = function () {
         return $.ajax({
             type: method,
             url: uri,
-            dataType: 'json',
             data: data ? data : null
         }).fail(function (jqXHR, textStatus, errorThrown) {
             self.error(errorThrown);
@@ -128,13 +127,14 @@ var ViewModel = function () {
 
     function getDecisionTree(json){
         //ocpu.seturl(opencpu_root+"jsonDecisionTrees/R");
-        var dtUrl = opencpu_root+"jsonDecisionTrees/R/json_dt/json"
+        var dtUrl = opencpu_root+"jsonDecisionTrees/R/json_dt/json";
         var shuffledData = shuffle(json);
         var splitIndex = Math.floor(shuffledData.length * self.splitPercent());
         trainData = shuffledData.slice(0, splitIndex);
         testData = shuffledData.slice(splitIndex+1);
         var model = self.model();
-        ajaxHelper(data_uri, 'POST', {model:model, data:trainData}).done(function (json) {
+        ajaxHelper(dtUrl, 'POST', "model="+model+"&data="+JSON.stringify(trainData))
+        .done(function (json) {
             ko.utils.arrayPushAll(self.dt_rules, json);
         });
 
